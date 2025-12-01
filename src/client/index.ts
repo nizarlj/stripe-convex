@@ -32,7 +32,7 @@ export class StripeSubscriptions {
     public component: StripeComponent,
     options?: {
       STRIPE_SECRET_KEY?: string;
-    }
+    },
   ) {
     this._apiKey = options?.STRIPE_SECRET_KEY ?? process.env.STRIPE_SECRET_KEY!;
   }
@@ -52,7 +52,7 @@ export class StripeSubscriptions {
     args: {
       stripeSubscriptionId: string;
       quantity: number;
-    }
+    },
   ) {
     // Delegate to the component's public action
     await ctx.runAction(this.component.public.updateSubscriptionQuantity, {
@@ -72,7 +72,7 @@ export class StripeSubscriptions {
     args: {
       stripeSubscriptionId: string;
       cancelAtPeriodEnd?: boolean;
-    }
+    },
   ) {
     const stripe = new StripeSDK(this.apiKey);
     const cancelAtPeriodEnd = args.cancelAtPeriodEnd ?? true;
@@ -80,11 +80,16 @@ export class StripeSubscriptions {
     let subscription: StripeSDK.Subscription;
 
     if (cancelAtPeriodEnd) {
-      subscription = await stripe.subscriptions.update(args.stripeSubscriptionId, {
-        cancel_at_period_end: true,
-      });
+      subscription = await stripe.subscriptions.update(
+        args.stripeSubscriptionId,
+        {
+          cancel_at_period_end: true,
+        },
+      );
     } else {
-      subscription = await stripe.subscriptions.cancel(args.stripeSubscriptionId);
+      subscription = await stripe.subscriptions.cancel(
+        args.stripeSubscriptionId,
+      );
     }
 
     // Update local database immediately (don't wait for webhook)
@@ -108,14 +113,17 @@ export class StripeSubscriptions {
     ctx: ActionCtx,
     args: {
       stripeSubscriptionId: string;
-    }
+    },
   ) {
     const stripe = new StripeSDK(this.apiKey);
 
     // Reactivate by setting cancel_at_period_end to false
-    const subscription = await stripe.subscriptions.update(args.stripeSubscriptionId, {
-      cancel_at_period_end: false,
-    });
+    const subscription = await stripe.subscriptions.update(
+      args.stripeSubscriptionId,
+      {
+        cancel_at_period_end: false,
+      },
+    );
 
     // Update local database immediately
     await ctx.runMutation(this.component.private.handleSubscriptionUpdated, {
@@ -151,7 +159,7 @@ export class StripeSubscriptions {
       subscriptionMetadata?: Record<string, string>;
       /** Metadata to attach to the payment intent (only for mode: "payment") */
       paymentIntentMetadata?: Record<string, string>;
-    }
+    },
   ) {
     const stripe = new StripeSDK(this.apiKey);
 
@@ -196,7 +204,7 @@ export class StripeSubscriptions {
 
   /**
    * Create a new Stripe customer.
-   * 
+   *
    * @param args.idempotencyKey - Optional key to prevent duplicate customer creation.
    *   If two requests come in with the same key, Stripe returns the same customer.
    *   Recommended: pass `userId` to prevent race conditions.
@@ -208,20 +216,23 @@ export class StripeSubscriptions {
       name?: string;
       metadata?: Record<string, string>;
       idempotencyKey?: string;
-    }
+    },
   ) {
     const stripe = new StripeSDK(this.apiKey);
 
     // Use idempotency key to prevent duplicate customers from race conditions
-    const requestOptions = args.idempotencyKey 
+    const requestOptions = args.idempotencyKey
       ? { idempotencyKey: `create_customer_${args.idempotencyKey}` }
       : undefined;
 
-    const customer = await stripe.customers.create({
-      email: args.email,
-      name: args.name,
-      metadata: args.metadata,
-    }, requestOptions);
+    const customer = await stripe.customers.create(
+      {
+        email: args.email,
+        name: args.name,
+        metadata: args.metadata,
+      },
+      requestOptions,
+    );
 
     // Store in our database
     await ctx.runMutation(this.component.public.createOrUpdateCustomer, {
@@ -246,12 +257,12 @@ export class StripeSubscriptions {
       userId: string;
       email?: string;
       name?: string;
-    }
+    },
   ) {
     // Check if customer exists by userId in subscriptions
     const existingSubs = await ctx.runQuery(
       this.component.public.listSubscriptionsByUserId,
-      { userId: args.userId }
+      { userId: args.userId },
     );
 
     if (existingSubs.length > 0) {
@@ -261,7 +272,7 @@ export class StripeSubscriptions {
     // Check existing payments
     const existingPayments = await ctx.runQuery(
       this.component.public.listPaymentsByUserId,
-      { userId: args.userId }
+      { userId: args.userId },
     );
 
     if (existingPayments.length > 0 && existingPayments[0].stripeCustomerId) {
@@ -287,7 +298,7 @@ export class StripeSubscriptions {
     args: {
       customerId: string;
       returnUrl: string;
-    }
+    },
   ) {
     const stripe = new StripeSDK(this.apiKey);
 
@@ -378,13 +389,13 @@ export function registerRoutes(
         event = await stripe.webhooks.constructEventAsync(
           body,
           signature,
-          webhookSecret
+          webhookSecret,
         );
       } catch (err) {
         console.error("❌ Webhook signature verification failed:", err);
         return new Response(
           `Webhook signature verification failed: ${err instanceof Error ? err.message : String(err)}`,
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -426,7 +437,7 @@ async function processEvent(
   ctx: MutationCtx | ActionCtx,
   component: ComponentApi,
   event: StripeSDK.Event,
-  stripe: StripeSDK
+  stripe: StripeSDK,
 ): Promise<void> {
   switch (event.type) {
     case "customer.created":
@@ -509,11 +520,11 @@ async function processEvent(
       if (session.mode === "subscription" && session.subscription) {
         try {
           const subscription = await stripe.subscriptions.retrieve(
-            session.subscription as string
+            session.subscription as string,
           );
           if (subscription.latest_invoice) {
             const invoice = await stripe.invoices.retrieve(
-              subscription.latest_invoice as string
+              subscription.latest_invoice as string,
             );
             await ctx.runMutation(component.private.handleInvoiceCreated, {
               stripeInvoiceId: invoice.id,
@@ -574,11 +585,11 @@ async function processEvent(
       if (paymentIntent.invoice) {
         try {
           const invoice = await stripe.invoices.retrieve(
-            paymentIntent.invoice as string
+            paymentIntent.invoice as string,
           );
           if ((invoice as any).subscription) {
             console.log(
-              "⏭️ Skipping payment_intent.succeeded - subscription payment"
+              "⏭️ Skipping payment_intent.succeeded - subscription payment",
             );
             break;
           }
@@ -593,17 +604,18 @@ async function processEvent(
           component.public.listSubscriptions,
           {
             stripeCustomerId: paymentIntent.customer as string,
-          }
+          },
         );
 
-        const recentWindowStart = Date.now() / 1000 - RECENT_SUBSCRIPTION_WINDOW_SECONDS;
+        const recentWindowStart =
+          Date.now() / 1000 - RECENT_SUBSCRIPTION_WINDOW_SECONDS;
         const recentSubscription = recentSubscriptions.find(
-          (sub: any) => sub._creationTime > recentWindowStart
+          (sub: any) => sub._creationTime > recentWindowStart,
         );
 
         if (recentSubscription) {
           console.log(
-            "⏭️ Skipping payment_intent.succeeded - recent subscription"
+            "⏭️ Skipping payment_intent.succeeded - recent subscription",
           );
           break;
         }

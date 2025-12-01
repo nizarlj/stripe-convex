@@ -28,7 +28,7 @@ export const getCustomer = query({
     const customer = await ctx.db
       .query("customers")
       .withIndex("by_stripe_customer_id", (q) =>
-        q.eq("stripeCustomerId", args.stripeCustomerId)
+        q.eq("stripeCustomerId", args.stripeCustomerId),
       )
       .unique();
     if (!customer) return null;
@@ -47,7 +47,7 @@ export const getSubscription = query({
     const subscription = await ctx.db
       .query("subscriptions")
       .withIndex("by_stripe_subscription_id", (q) =>
-        q.eq("stripeSubscriptionId", args.stripeSubscriptionId)
+        q.eq("stripeSubscriptionId", args.stripeSubscriptionId),
       )
       .unique();
     if (!subscription) return null;
@@ -66,7 +66,7 @@ export const listSubscriptions = query({
     const subscriptions = await ctx.db
       .query("subscriptions")
       .withIndex("by_stripe_customer_id", (q) =>
-        q.eq("stripeCustomerId", args.stripeCustomerId)
+        q.eq("stripeCustomerId", args.stripeCustomerId),
       )
       .collect();
     return subscriptions.map(({ _id, _creationTime, ...data }) => data);
@@ -117,7 +117,7 @@ export const getPayment = query({
     const payment = await ctx.db
       .query("payments")
       .withIndex("by_stripe_payment_intent_id", (q) =>
-        q.eq("stripePaymentIntentId", args.stripePaymentIntentId)
+        q.eq("stripePaymentIntentId", args.stripePaymentIntentId),
       )
       .unique();
     if (!payment) return null;
@@ -136,7 +136,7 @@ export const listPayments = query({
     const payments = await ctx.db
       .query("payments")
       .withIndex("by_stripe_customer_id", (q) =>
-        q.eq("stripeCustomerId", args.stripeCustomerId)
+        q.eq("stripeCustomerId", args.stripeCustomerId),
       )
       .collect();
     return payments.map(({ _id, _creationTime, ...data }) => data);
@@ -183,7 +183,7 @@ export const listInvoices = query({
     const invoices = await ctx.db
       .query("invoices")
       .withIndex("by_stripe_customer_id", (q) =>
-        q.eq("stripeCustomerId", args.stripeCustomerId)
+        q.eq("stripeCustomerId", args.stripeCustomerId),
       )
       .collect();
     return invoices.map(({ _id, _creationTime, ...data }) => data);
@@ -240,7 +240,7 @@ export const createOrUpdateCustomer = mutation({
     const existing = await ctx.db
       .query("customers")
       .withIndex("by_stripe_customer_id", (q) =>
-        q.eq("stripeCustomerId", args.stripeCustomerId)
+        q.eq("stripeCustomerId", args.stripeCustomerId),
       )
       .unique();
 
@@ -279,13 +279,13 @@ export const updateSubscriptionMetadata = mutation({
     const subscription = await ctx.db
       .query("subscriptions")
       .withIndex("by_stripe_subscription_id", (q) =>
-        q.eq("stripeSubscriptionId", args.stripeSubscriptionId)
+        q.eq("stripeSubscriptionId", args.stripeSubscriptionId),
       )
       .unique();
 
     if (!subscription) {
       throw new Error(
-        `Subscription ${args.stripeSubscriptionId} not found in database`
+        `Subscription ${args.stripeSubscriptionId} not found in database`,
       );
     }
 
@@ -314,7 +314,7 @@ export const updateSubscriptionQuantity = action({
     const apiKey = process.env.STRIPE_SECRET_KEY;
     if (!apiKey) {
       throw new Error(
-        "STRIPE_SECRET_KEY must be provided as an environment variable"
+        "STRIPE_SECRET_KEY must be provided as an environment variable",
       );
     }
 
@@ -322,7 +322,7 @@ export const updateSubscriptionQuantity = action({
 
     // Get the subscription from Stripe to find the subscription item ID
     const subscription = await stripe.subscriptions.retrieve(
-      args.stripeSubscriptionId
+      args.stripeSubscriptionId,
     );
 
     if (!subscription.items.data[0]) {

@@ -29,7 +29,7 @@ export type StripeEventHandler<
   T extends Stripe.Event.Type = Stripe.Event.Type,
 > = (
   ctx: GenericActionCtx<GenericDataModel>,
-  event: Stripe.Event & { type: T }
+  event: Stripe.Event & { type: T },
 ) => Promise<void>;
 
 /**
