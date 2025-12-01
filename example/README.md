@@ -1,6 +1,7 @@
 # Benji's Store - Example App
 
-A complete example app demonstrating the `@convex/stripe` component with Clerk authentication.
+A complete example app demonstrating the `@convex/stripe` component with Clerk
+authentication.
 
 ![Benji's Store Screenshot](https://via.placeholder.com/800x400?text=Benji%27s+Store)
 
@@ -40,10 +41,12 @@ npm install
 
 ### 3. Configure Stripe
 
-1. Go to [Stripe Dashboard → Developers → API Keys](https://dashboard.stripe.com/test/apikeys)
+1. Go to
+   [Stripe Dashboard → Developers → API Keys](https://dashboard.stripe.com/test/apikeys)
 2. Copy your **Secret Key** (`sk_test_...`)
 
-3. Create two products in [Stripe Dashboard → Products](https://dashboard.stripe.com/test/products):
+3. Create two products in
+   [Stripe Dashboard → Products](https://dashboard.stripe.com/test/products):
 
    **Product 1: Single Hat**
    - Name: "Premium Hat"
@@ -74,13 +77,14 @@ VITE_STRIPE_SUBSCRIPTION_PRICE_ID=price_...
 npm run dev
 ```
 
-2. Add environment variables in [Convex Dashboard](https://dashboard.convex.dev) → Settings → Environment Variables:
+2. Add environment variables in [Convex Dashboard](https://dashboard.convex.dev)
+   → Settings → Environment Variables:
 
-| Variable | Value |
-|----------|-------|
-| `STRIPE_SECRET_KEY` | `sk_test_...` (from Stripe) |
-| `STRIPE_WEBHOOK_SECRET` | `whsec_...` (from Step 5) |
-| `APP_URL` | `http://localhost:5173` (or your production URL) |
+| Variable                | Value                                            |
+| ----------------------- | ------------------------------------------------ |
+| `STRIPE_SECRET_KEY`     | `sk_test_...` (from Stripe)                      |
+| `STRIPE_WEBHOOK_SECRET` | `whsec_...` (from Step 5)                        |
+| `APP_URL`               | `http://localhost:5173` (or your production URL) |
 
 3. Create `example/convex/auth.config.ts`:
 
@@ -103,16 +107,20 @@ npx convex dev --once
 
 ### 5. Configure Stripe Webhooks
 
-1. Go to [Stripe Dashboard → Developers → Webhooks](https://dashboard.stripe.com/test/webhooks)
+1. Go to
+   [Stripe Dashboard → Developers → Webhooks](https://dashboard.stripe.com/test/webhooks)
 
 2. Click **"Add endpoint"**
 
 3. Enter your Convex webhook URL:
+
    ```
    https://YOUR_CONVEX_DEPLOYMENT.convex.site/stripe/webhook
    ```
-   
-   Find your deployment name in the Convex dashboard. It's the part before `.convex.cloud` in your URL:
+
+   Find your deployment name in the Convex dashboard. It's the part before
+   `.convex.cloud` in your URL:
+
    ```
    VITE_CONVEX_URL=https://YOUR_CONVEX_DEPLOYMENT.convex.cloud
    # Webhook URL uses .convex.site instead: YOUR_CONVEX_DEPLOYMENT.convex.site/stripe/webhook
@@ -150,12 +158,12 @@ Open [http://localhost:5173](http://localhost:5173)
 
 Use these [Stripe test cards](https://stripe.com/docs/testing):
 
-| Scenario | Card Number |
-|----------|-------------|
-| Successful payment | `4242 4242 4242 4242` |
-| Declined | `4000 0000 0000 0002` |
+| Scenario                | Card Number           |
+| ----------------------- | --------------------- |
+| Successful payment      | `4242 4242 4242 4242` |
+| Declined                | `4000 0000 0000 0002` |
 | Requires authentication | `4000 0025 0000 3155` |
-| Insufficient funds | `4000 0000 0000 9995` |
+| Insufficient funds      | `4000 0000 0000 9995` |
 
 Use any future expiration date and any 3-digit CVC.
 
@@ -180,6 +188,7 @@ example/
 ### `convex/stripe.ts`
 
 Contains all the Stripe integration logic:
+
 - `createSubscriptionCheckout` - Create subscription checkout
 - `createPaymentCheckout` - Create one-time payment checkout
 - `createTeamSubscriptionCheckout` - Create team/org subscription checkout
@@ -199,6 +208,7 @@ Registers the Stripe webhook handler with optional custom event handlers.
 ### `src/App.tsx`
 
 React app with four pages:
+
 - **Home** - Landing page with product showcase
 - **Store** - Product cards with purchase buttons (single-user subscriptions)
 - **Profile** - Order history and subscription management

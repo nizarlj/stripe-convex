@@ -1,16 +1,17 @@
 # Convex Functions - Stripe Integration
 
-This directory contains the Convex backend functions for Benji's Store, demonstrating the `@convex/stripe` component.
+This directory contains the Convex backend functions for Benji's Store,
+demonstrating the `@convex/stripe` component.
 
 ## Files
 
-| File | Purpose |
-|------|---------|
+| File               | Purpose                               |
+| ------------------ | ------------------------------------- |
 | `convex.config.ts` | Installs the @convex/stripe component |
-| `auth.config.ts` | Configures Clerk authentication |
-| `http.ts` | Registers Stripe webhook routes |
-| `schema.ts` | Database schema (app-specific tables) |
-| `stripe.ts` | Stripe actions and queries |
+| `auth.config.ts`   | Configures Clerk authentication       |
+| `http.ts`          | Registers Stripe webhook routes       |
+| `schema.ts`        | Database schema (app-specific tables) |
+| `stripe.ts`        | Stripe actions and queries            |
 
 ## Quick Reference
 
@@ -105,31 +106,29 @@ await stripeClient.updateSubscriptionQuantity(ctx, {
 // List subscriptions for a user
 const subs = await ctx.runQuery(
   components.stripe.public.listSubscriptionsByUserId,
-  { userId: "user_123" }
+  { userId: "user_123" },
 );
 
 // List payments for a user
 const payments = await ctx.runQuery(
   components.stripe.public.listPaymentsByUserId,
-  { userId: "user_123" }
+  { userId: "user_123" },
 );
 
 // Get subscription by ID
-const sub = await ctx.runQuery(
-  components.stripe.public.getSubscription,
-  { stripeSubscriptionId: "sub_..." }
-);
+const sub = await ctx.runQuery(components.stripe.public.getSubscription, {
+  stripeSubscriptionId: "sub_...",
+});
 
 // List invoices for a customer
-const invoices = await ctx.runQuery(
-  components.stripe.public.listInvoices,
-  { stripeCustomerId: "cus_..." }
-);
+const invoices = await ctx.runQuery(components.stripe.public.listInvoices, {
+  stripeCustomerId: "cus_...",
+});
 
 // List invoices for an organization
 const orgInvoices = await ctx.runQuery(
   components.stripe.public.listInvoicesByOrgId,
-  { orgId: "org_..." }
+  { orgId: "org_..." },
 );
 ```
 
@@ -163,7 +162,8 @@ export default http;
 
 ## Environment Variables
 
-Set these in [Convex Dashboard](https://dashboard.convex.dev) → Settings → Environment Variables:
+Set these in [Convex Dashboard](https://dashboard.convex.dev) → Settings →
+Environment Variables:
 
 ```
 STRIPE_SECRET_KEY=sk_test_...

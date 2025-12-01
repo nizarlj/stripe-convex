@@ -11,16 +11,16 @@ type Page = "home" | "store" | "profile" | "team";
 // ============================================================================
 
 function formatDate(timestamp: number) {
-  return new Date(timestamp * 1000).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
+  return new Date(timestamp * 1000).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 }
 
 function formatCurrency(amount: number, currency: string) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
     currency: currency.toUpperCase(),
   }).format(amount / 100);
 }
@@ -37,35 +37,42 @@ function getStatusBadge(status: string) {
     paid: { label: "Paid", class: "status-active" },
     open: { label: "Open", class: "status-warning" },
   };
-  const statusInfo = statusMap[status] || { label: status, class: "status-default" };
-  return <span className={`status-badge ${statusInfo.class}`}>{statusInfo.label}</span>;
+  const statusInfo = statusMap[status] || {
+    label: status,
+    class: "status-default",
+  };
+  return (
+    <span className={`status-badge ${statusInfo.class}`}>
+      {statusInfo.label}
+    </span>
+  );
 }
 
 // ============================================================================
 // NAVBAR
 // ============================================================================
-function Navbar({ 
-  currentPage, 
-  setCurrentPage 
-}: { 
-  currentPage: Page; 
+function Navbar({
+  currentPage,
+  setCurrentPage,
+}: {
+  currentPage: Page;
   setCurrentPage: (page: Page) => void;
 }) {
   const { isSignedIn } = useUser();
-  
+
   return (
     <nav className="navbar">
       <span className="navbar-brand" onClick={() => setCurrentPage("home")}>
         Benji's Store
       </span>
       <div className="navbar-links">
-        <button 
-          className={`nav-link ${currentPage === "home" ? "active" : ""}`} 
+        <button
+          className={`nav-link ${currentPage === "home" ? "active" : ""}`}
           onClick={() => setCurrentPage("home")}
         >
           Home
         </button>
-        <button 
+        <button
           className={`nav-link ${currentPage === "store" ? "active" : ""}`}
           onClick={() => setCurrentPage("store")}
         >
@@ -73,13 +80,13 @@ function Navbar({
         </button>
         {isSignedIn && (
           <>
-            <button 
+            <button
               className={`nav-link ${currentPage === "profile" ? "active" : ""}`}
               onClick={() => setCurrentPage("profile")}
             >
               Profile
             </button>
-            <button 
+            <button
               className={`nav-link ${currentPage === "team" ? "active" : ""}`}
               onClick={() => setCurrentPage("team")}
             >
@@ -105,7 +112,9 @@ function Navbar({
 // FAILED PAYMENT BANNER (#9)
 // ============================================================================
 function FailedPaymentBanner() {
-  const failedSubscriptions = useQuery(api.stripe.getFailedPaymentSubscriptions);
+  const failedSubscriptions = useQuery(
+    api.stripe.getFailedPaymentSubscriptions,
+  );
   const getPortalUrl = useAction(api.stripe.getCustomerPortalUrl);
   const [loading, setLoading] = useState(false);
 
@@ -130,7 +139,10 @@ function FailedPaymentBanner() {
       <div className="banner-icon">⚠️</div>
       <div className="banner-content">
         <strong>Payment Failed</strong>
-        <p>Your subscription payment couldn't be processed. Please update your payment method to continue.</p>
+        <p>
+          Your subscription payment couldn't be processed. Please update your
+          payment method to continue.
+        </p>
       </div>
       <button className="btn-retry" onClick={handleRetry} disabled={loading}>
         {loading ? "Loading..." : "Update Payment Method"}
@@ -149,21 +161,25 @@ function Hero({ setCurrentPage }: { setCurrentPage: (page: Page) => void }) {
         <div className="hero-content">
           <div className="hero-badge">Stripe Component Demo</div>
           <h1 className="hero-title">
-            Premium hats,<br />
+            Premium hats,
+            <br />
             <em>delivered monthly</em>
           </h1>
           <p className="hero-subtitle">
-            The perfect example app for testing the @convex/stripe component. 
+            The perfect example app for testing the @convex/stripe component.
             Buy a single hat or subscribe for monthly deliveries.
           </p>
           <div className="hero-buttons">
-            <button className="btn-primary" onClick={() => setCurrentPage("store")}>
+            <button
+              className="btn-primary"
+              onClick={() => setCurrentPage("store")}
+            >
               Shop now
               <span>→</span>
             </button>
-            <a 
-              href="https://github.com/get-convex/convex-stripe" 
-              target="_blank" 
+            <a
+              href="https://github.com/get-convex/convex-stripe"
+              target="_blank"
               rel="noopener noreferrer"
               className="btn-secondary"
             >
@@ -179,14 +195,34 @@ function Hero({ setCurrentPage }: { setCurrentPage: (page: Page) => void }) {
               <span className="card-dot"></span>
             </div>
             <div className="card-code">
-              <div><span className="code-comment">// One-time payment</span></div>
-              <div><span className="code-keyword">const</span> <span className="code-variable">checkout</span> = <span className="code-function">useAction</span>(</div>
-              <div>&nbsp;&nbsp;api.stripe.<span className="code-function">createPaymentCheckout</span></div>
+              <div>
+                <span className="code-comment">// One-time payment</span>
+              </div>
+              <div>
+                <span className="code-keyword">const</span>{" "}
+                <span className="code-variable">checkout</span> ={" "}
+                <span className="code-function">useAction</span>(
+              </div>
+              <div>
+                &nbsp;&nbsp;api.stripe.
+                <span className="code-function">createPaymentCheckout</span>
+              </div>
               <div>);</div>
               <br />
-              <div><span className="code-comment">// Or subscribe monthly</span></div>
-              <div><span className="code-keyword">const</span> <span className="code-variable">subscribe</span> = <span className="code-function">useAction</span>(</div>
-              <div>&nbsp;&nbsp;api.stripe.<span className="code-function">createSubscriptionCheckout</span></div>
+              <div>
+                <span className="code-comment">// Or subscribe monthly</span>
+              </div>
+              <div>
+                <span className="code-keyword">const</span>{" "}
+                <span className="code-variable">subscribe</span> ={" "}
+                <span className="code-function">useAction</span>(
+              </div>
+              <div>
+                &nbsp;&nbsp;api.stripe.
+                <span className="code-function">
+                  createSubscriptionCheckout
+                </span>
+              </div>
               <div>);</div>
             </div>
           </div>
@@ -205,33 +241,38 @@ function Features() {
     {
       icon: "🎩",
       title: "Premium Quality",
-      description: "Each hat is handcrafted with the finest materials. Built to last."
+      description:
+        "Each hat is handcrafted with the finest materials. Built to last.",
     },
     {
       icon: "📦",
       title: "Monthly Delivery",
-      description: "Subscribe and get a new hat delivered to your door every month."
+      description:
+        "Subscribe and get a new hat delivered to your door every month.",
     },
     {
       icon: "💳",
       title: "Stripe Powered",
-      description: "Secure payments via Stripe Checkout. Manage billing in the Customer Portal."
+      description:
+        "Secure payments via Stripe Checkout. Manage billing in the Customer Portal.",
     },
     {
       icon: "⚡",
       title: "Real-time Sync",
-      description: "Convex webhooks keep your subscription status always up to date."
+      description:
+        "Convex webhooks keep your subscription status always up to date.",
     },
     {
       icon: "👥",
       title: "Team Billing",
-      description: "Seat-based pricing for teams. Add or remove seats anytime."
+      description: "Seat-based pricing for teams. Add or remove seats anytime.",
     },
     {
       icon: "📊",
       title: "Order History",
-      description: "Track all your orders and subscription status in your profile."
-    }
+      description:
+        "Track all your orders and subscription status in your profile.",
+    },
   ];
 
   return (
@@ -240,7 +281,8 @@ function Features() {
         <span className="section-badge">How It Works</span>
         <h2 className="section-title">Payments made simple</h2>
         <p className="section-subtitle">
-          Built with the @convex/stripe component for seamless Stripe integration.
+          Built with the @convex/stripe component for seamless Stripe
+          integration.
         </p>
       </div>
       <div className="features-grid">
@@ -279,13 +321,28 @@ function Footer() {
       <div className="footer-content">
         <span className="footer-brand">Benji's Store</span>
         <div className="footer-links">
-          <a href="https://docs.convex.dev" target="_blank" rel="noopener noreferrer" className="footer-link">
+          <a
+            href="https://docs.convex.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-link"
+          >
             Convex Docs
           </a>
-          <a href="https://stripe.com/docs" target="_blank" rel="noopener noreferrer" className="footer-link">
+          <a
+            href="https://stripe.com/docs"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-link"
+          >
             Stripe Docs
           </a>
-          <a href="https://clerk.com/docs" target="_blank" rel="noopener noreferrer" className="footer-link">
+          <a
+            href="https://clerk.com/docs"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-link"
+          >
             Clerk Docs
           </a>
         </div>
@@ -297,7 +354,11 @@ function Footer() {
   );
 }
 
-function LandingPage({ setCurrentPage }: { setCurrentPage: (page: Page) => void }) {
+function LandingPage({
+  setCurrentPage,
+}: {
+  setCurrentPage: (page: Page) => void;
+}) {
   return (
     <>
       <Hero setCurrentPage={setCurrentPage} />
@@ -314,7 +375,8 @@ function LandingPage({ setCurrentPage }: { setCurrentPage: (page: Page) => void 
 
 // Price IDs from environment variables (set in .env.local)
 const STRIPE_ONE_TIME_PRICE_ID = import.meta.env.VITE_STRIPE_ONE_TIME_PRICE_ID;
-const STRIPE_SUBSCRIPTION_PRICE_ID = import.meta.env.VITE_STRIPE_SUBSCRIPTION_PRICE_ID;
+const STRIPE_SUBSCRIPTION_PRICE_ID = import.meta.env
+  .VITE_STRIPE_SUBSCRIPTION_PRICE_ID;
 
 const PRODUCTS = {
   oneTimeHat: {
@@ -329,7 +391,8 @@ const PRODUCTS = {
   monthlySubscription: {
     id: "monthly-hat",
     name: "Hat of the Month Club",
-    description: "Get a new exclusive hat delivered every month. Cancel anytime.",
+    description:
+      "Get a new exclusive hat delivered every month. Cancel anytime.",
     price: 29,
     priceId: STRIPE_SUBSCRIPTION_PRICE_ID,
     type: "subscription" as const,
@@ -339,24 +402,22 @@ const PRODUCTS = {
   },
 };
 
-function ProductCard({ 
-  product, 
-  onPurchase, 
+function ProductCard({
+  product,
+  onPurchase,
   loading,
-}: { 
+}: {
   product: typeof PRODUCTS.oneTimeHat | typeof PRODUCTS.monthlySubscription;
   onPurchase: () => void;
   loading: boolean;
 }) {
   const isSubscription = product.type === "subscription";
-  
+
   return (
     <div className="product-card-large">
       <div className="product-image-large">
         {product.emoji}
-        {isSubscription && (
-          <div className="product-badge">Monthly</div>
-        )}
+        {isSubscription && <div className="product-badge">Monthly</div>}
       </div>
       <div className="product-info-large">
         <span className="product-category">
@@ -364,14 +425,14 @@ function ProductCard({
         </span>
         <h3 className="product-name-large">{product.name}</h3>
         <p className="product-description-large">{product.description}</p>
-        
+
         <div className="product-price-large">
           ${product.price}
           {isSubscription && <span className="price-interval">/month</span>}
         </div>
-        
-        <button 
-          className="btn-purchase" 
+
+        <button
+          className="btn-purchase"
           onClick={onPurchase}
           disabled={loading}
         >
@@ -383,12 +444,18 @@ function ProductCard({
   );
 }
 
-function StorePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void }) {
+function StorePage({
+  setCurrentPage,
+}: {
+  setCurrentPage: (page: Page) => void;
+}) {
   const { isSignedIn, user } = useUser();
   const [loading, setLoading] = useState<string | null>(null);
-  
+
   const createPaymentCheckout = useAction(api.stripe.createPaymentCheckout);
-  const createSubscriptionCheckout = useAction(api.stripe.createSubscriptionCheckout);
+  const createSubscriptionCheckout = useAction(
+    api.stripe.createSubscriptionCheckout,
+  );
 
   if (!isSignedIn) {
     return (
@@ -396,7 +463,9 @@ function StorePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void })
         <div className="auth-container">
           <div className="auth-icon">🎩</div>
           <h2 className="auth-title">Welcome to Benji's Store</h2>
-          <p className="auth-subtitle">Sign in to purchase hats or manage your subscription</p>
+          <p className="auth-subtitle">
+            Sign in to purchase hats or manage your subscription
+          </p>
           <SignInButton mode="modal">
             <button className="btn-primary">
               Sign in to continue
@@ -408,7 +477,9 @@ function StorePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void })
     );
   }
 
-  const handlePurchase = async (product: typeof PRODUCTS.oneTimeHat | typeof PRODUCTS.monthlySubscription) => {
+  const handlePurchase = async (
+    product: typeof PRODUCTS.oneTimeHat | typeof PRODUCTS.monthlySubscription,
+  ) => {
     setLoading(product.id);
     try {
       let result;
@@ -418,13 +489,15 @@ function StorePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void })
       } else {
         result = await createPaymentCheckout({ priceId: product.priceId });
       }
-      
+
       if (result.url) {
         window.location.href = result.url;
       }
     } catch (error) {
       console.error("Checkout error:", error);
-      alert("Failed to create checkout session. Make sure your Stripe Price IDs are configured.");
+      alert(
+        "Failed to create checkout session. Make sure your Stripe Price IDs are configured.",
+      );
     } finally {
       setLoading(null);
     }
@@ -433,16 +506,21 @@ function StorePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void })
   return (
     <div className="store-page">
       <FailedPaymentBanner />
-      
+
       <div className="user-welcome">
         <div className="user-card">
           <div className="user-info">
             <div className="user-avatar">
               {user?.imageUrl ? (
-                <img 
-                  src={user.imageUrl} 
-                  alt="Avatar" 
-                  style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} 
+                <img
+                  src={user.imageUrl}
+                  alt="Avatar"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                  }}
                 />
               ) : (
                 user?.firstName?.[0] || "?"
@@ -453,7 +531,10 @@ function StorePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void })
               <p>{user?.primaryEmailAddress?.emailAddress}</p>
             </div>
           </div>
-          <button className="btn-profile" onClick={() => setCurrentPage("profile")}>
+          <button
+            className="btn-profile"
+            onClick={() => setCurrentPage("profile")}
+          >
             View Profile
           </button>
         </div>
@@ -461,16 +542,18 @@ function StorePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void })
 
       <div className="store-header">
         <h1 className="store-title">Choose Your Hat</h1>
-        <p className="store-subtitle">One-time purchase or monthly subscription</p>
+        <p className="store-subtitle">
+          One-time purchase or monthly subscription
+        </p>
       </div>
 
       <div className="products-container">
-        <ProductCard 
+        <ProductCard
           product={PRODUCTS.oneTimeHat}
           onPurchase={() => handlePurchase(PRODUCTS.oneTimeHat)}
           loading={loading === PRODUCTS.oneTimeHat.id}
         />
-        <ProductCard 
+        <ProductCard
           product={PRODUCTS.monthlySubscription}
           onPurchase={() => handlePurchase(PRODUCTS.monthlySubscription)}
           loading={loading === PRODUCTS.monthlySubscription.id}
@@ -482,12 +565,13 @@ function StorePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void })
         <div className="note-content">
           <strong>Testing the integration?</strong>
           <p>
-            Replace the <code>priceId</code> values in <code>App.tsx</code> with your actual Stripe Price IDs.
-            Use <code>4242 4242 4242 4242</code> as a test card number.
+            Replace the <code>priceId</code> values in <code>App.tsx</code> with
+            your actual Stripe Price IDs. Use <code>4242 4242 4242 4242</code>{" "}
+            as a test card number.
           </p>
         </div>
       </div>
-      
+
       <Footer />
     </div>
   );
@@ -497,14 +581,20 @@ function StorePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void })
 // PROFILE PAGE
 // ============================================================================
 
-function ProfilePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void }) {
+function ProfilePage({
+  setCurrentPage,
+}: {
+  setCurrentPage: (page: Page) => void;
+}) {
   const { isSignedIn, user } = useUser();
   const subscriptions = useQuery(api.stripe.getUserSubscriptions);
   const payments = useQuery(api.stripe.getUserPayments);
   const cancelSubscriptionAction = useAction(api.stripe.cancelSubscription);
-  const reactivateSubscriptionAction = useAction(api.stripe.reactivateSubscription);
+  const reactivateSubscriptionAction = useAction(
+    api.stripe.reactivateSubscription,
+  );
   const getPortalUrl = useAction(api.stripe.getCustomerPortalUrl);
-  
+
   const [cancelingId, setCancelingId] = useState<string | null>(null);
   const [reactivatingId, setReactivatingId] = useState<string | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
@@ -514,7 +604,9 @@ function ProfilePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void 
       <div className="auth-page">
         <div className="auth-container">
           <h2 className="auth-title">Profile</h2>
-          <p className="auth-subtitle">Sign in to view your orders and subscription</p>
+          <p className="auth-subtitle">
+            Sign in to view your orders and subscription
+          </p>
           <SignInButton mode="modal">
             <button className="btn-primary">
               Sign in
@@ -527,10 +619,14 @@ function ProfilePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void 
   }
 
   const handleCancelSubscription = async (subscriptionId: string) => {
-    if (!confirm("Are you sure you want to cancel? Your subscription will remain active until the end of the current billing period.")) {
+    if (
+      !confirm(
+        "Are you sure you want to cancel? Your subscription will remain active until the end of the current billing period.",
+      )
+    ) {
       return;
     }
-    
+
     setCancelingId(subscriptionId);
     try {
       await cancelSubscriptionAction({ subscriptionId });
@@ -571,16 +667,20 @@ function ProfilePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void 
     }
   };
 
-  const activeSubscriptions = subscriptions?.filter((s: { status: string }) => 
-    s.status === "active" || s.status === "past_due"
-  ) || [];
+  const activeSubscriptions =
+    subscriptions?.filter(
+      (s: { status: string }) =>
+        s.status === "active" || s.status === "past_due",
+    ) || [];
   const hasActiveSubscription = activeSubscriptions.length > 0;
-  const hasAnyBilling = (subscriptions && subscriptions.length > 0) || (payments && payments.length > 0);
+  const hasAnyBilling =
+    (subscriptions && subscriptions.length > 0) ||
+    (payments && payments.length > 0);
 
   return (
     <div className="profile-page">
       <FailedPaymentBanner />
-      
+
       {/* User Header */}
       <div className="profile-header">
         <div className="profile-avatar">
@@ -592,11 +692,13 @@ function ProfilePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void 
         </div>
         <div className="profile-info">
           <h1 className="profile-name">{user?.fullName || "User"}</h1>
-          <p className="profile-email">{user?.primaryEmailAddress?.emailAddress}</p>
+          <p className="profile-email">
+            {user?.primaryEmailAddress?.emailAddress}
+          </p>
         </div>
         {/* #6 - Manage Billing Button */}
         {hasAnyBilling && (
-          <button 
+          <button
             className="btn-manage-billing"
             onClick={handleManageBilling}
             disabled={portalLoading}
@@ -611,7 +713,10 @@ function ProfilePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void 
         <div className="section-header">
           <h2>📦 Subscription</h2>
           {!hasActiveSubscription && (
-            <button className="btn-small" onClick={() => setCurrentPage("store")}>
+            <button
+              className="btn-small"
+              onClick={() => setCurrentPage("store")}
+            >
               Subscribe
             </button>
           )}
@@ -623,78 +728,106 @@ function ProfilePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void 
           <div className="empty-state">
             <div className="empty-icon">📭</div>
             <h3>No active subscription</h3>
-            <p>Subscribe to the Hat of the Month Club to get a new hat delivered every month!</p>
-            <button className="btn-primary" onClick={() => setCurrentPage("store")}>
+            <p>
+              Subscribe to the Hat of the Month Club to get a new hat delivered
+              every month!
+            </p>
+            <button
+              className="btn-primary"
+              onClick={() => setCurrentPage("store")}
+            >
               View Plans
               <span>→</span>
             </button>
           </div>
         ) : (
           <div className="subscription-list">
-            {subscriptions.map((sub: { 
-              stripeSubscriptionId: string; 
-              stripeCustomerId: string;
-              status: string; 
-              currentPeriodEnd: number; 
-              cancelAtPeriodEnd: boolean;
-              quantity?: number;
-            }) => (
-              <div key={sub.stripeSubscriptionId} className="subscription-card">
-                <div className="subscription-header">
-                  <div className="subscription-icon">🎩</div>
-                  <div className="subscription-details">
-                    <h3>Hat of the Month Club</h3>
-                    {getStatusBadge(sub.status)}
+            {subscriptions.map(
+              (sub: {
+                stripeSubscriptionId: string;
+                stripeCustomerId: string;
+                status: string;
+                currentPeriodEnd: number;
+                cancelAtPeriodEnd: boolean;
+                quantity?: number;
+              }) => (
+                <div
+                  key={sub.stripeSubscriptionId}
+                  className="subscription-card"
+                >
+                  <div className="subscription-header">
+                    <div className="subscription-icon">🎩</div>
+                    <div className="subscription-details">
+                      <h3>Hat of the Month Club</h3>
+                      {getStatusBadge(sub.status)}
+                    </div>
                   </div>
-                </div>
-                
-                <div className="subscription-meta">
-                  <div className="meta-item">
-                    <span className="meta-label">Next delivery</span>
-                    <span className="meta-value">{formatDate(sub.currentPeriodEnd)}</span>
-                  </div>
-                  {sub.cancelAtPeriodEnd && (
+
+                  <div className="subscription-meta">
                     <div className="meta-item">
-                      <span className="meta-label cancel-notice">Cancels on</span>
-                      <span className="meta-value">{formatDate(sub.currentPeriodEnd)}</span>
+                      <span className="meta-label">Next delivery</span>
+                      <span className="meta-value">
+                        {formatDate(sub.currentPeriodEnd)}
+                      </span>
+                    </div>
+                    {sub.cancelAtPeriodEnd && (
+                      <div className="meta-item">
+                        <span className="meta-label cancel-notice">
+                          Cancels on
+                        </span>
+                        <span className="meta-value">
+                          {formatDate(sub.currentPeriodEnd)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Failed Payment Retry */}
+                  {sub.status === "past_due" && (
+                    <button
+                      className="btn-retry-payment"
+                      onClick={handleManageBilling}
+                      disabled={portalLoading}
+                    >
+                      {portalLoading
+                        ? "Loading..."
+                        : "⚠️ Update Payment Method"}
+                    </button>
+                  )}
+
+                  {sub.status === "active" && !sub.cancelAtPeriodEnd && (
+                    <button
+                      className="btn-cancel"
+                      onClick={() =>
+                        handleCancelSubscription(sub.stripeSubscriptionId)
+                      }
+                      disabled={cancelingId === sub.stripeSubscriptionId}
+                    >
+                      {cancelingId === sub.stripeSubscriptionId
+                        ? "Canceling..."
+                        : "Cancel Subscription"}
+                    </button>
+                  )}
+                  {sub.cancelAtPeriodEnd && (
+                    <div className="cancel-notice-banner">
+                      ⚠️ Your subscription will end on{" "}
+                      {formatDate(sub.currentPeriodEnd)}
+                      <button
+                        className="btn-reactivate"
+                        onClick={() =>
+                          handleReactivateSubscription(sub.stripeSubscriptionId)
+                        }
+                        disabled={reactivatingId === sub.stripeSubscriptionId}
+                      >
+                        {reactivatingId === sub.stripeSubscriptionId
+                          ? "Reactivating..."
+                          : "Reactivate"}
+                      </button>
                     </div>
                   )}
                 </div>
-
-                {/* Failed Payment Retry */}
-                {sub.status === "past_due" && (
-                  <button 
-                    className="btn-retry-payment"
-                    onClick={handleManageBilling}
-                    disabled={portalLoading}
-                  >
-                    {portalLoading ? "Loading..." : "⚠️ Update Payment Method"}
-                  </button>
-                )}
-
-                {sub.status === "active" && !sub.cancelAtPeriodEnd && (
-                  <button 
-                    className="btn-cancel"
-                    onClick={() => handleCancelSubscription(sub.stripeSubscriptionId)}
-                    disabled={cancelingId === sub.stripeSubscriptionId}
-                  >
-                    {cancelingId === sub.stripeSubscriptionId ? "Canceling..." : "Cancel Subscription"}
-                  </button>
-                )}
-                {sub.cancelAtPeriodEnd && (
-                  <div className="cancel-notice-banner">
-                    ⚠️ Your subscription will end on {formatDate(sub.currentPeriodEnd)}
-                    <button 
-                      className="btn-reactivate"
-                      onClick={() => handleReactivateSubscription(sub.stripeSubscriptionId)}
-                      disabled={reactivatingId === sub.stripeSubscriptionId}
-                    >
-                      {reactivatingId === sub.stripeSubscriptionId ? "Reactivating..." : "Reactivate"}
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
+              ),
+            )}
           </div>
         )}
       </section>
@@ -711,8 +844,13 @@ function ProfilePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void 
           <div className="empty-state">
             <div className="empty-icon">🛒</div>
             <h3>No orders yet</h3>
-            <p>Your purchase history will appear here after your first order.</p>
-            <button className="btn-primary" onClick={() => setCurrentPage("store")}>
+            <p>
+              Your purchase history will appear here after your first order.
+            </p>
+            <button
+              className="btn-primary"
+              onClick={() => setCurrentPage("store")}
+            >
               Shop Now
               <span>→</span>
             </button>
@@ -727,7 +865,9 @@ function ProfilePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void 
             </div>
             {payments.map((payment) => (
               <div key={payment.stripePaymentIntentId} className="table-row">
-                <span className="order-date">{formatDate(payment.created)}</span>
+                <span className="order-date">
+                  {formatDate(payment.created)}
+                </span>
                 <span className="order-product">
                   <span className="product-icon">🎩</span>
                   Benji's Hat
@@ -751,17 +891,25 @@ function ProfilePage({ setCurrentPage }: { setCurrentPage: (page: Page) => void 
 // TEAM BILLING PAGE (#4 - Organization-Based Lookups)
 // ============================================================================
 
-function TeamBillingPage({ setCurrentPage }: { setCurrentPage: (page: Page) => void }) {
+function TeamBillingPage({
+  setCurrentPage,
+}: {
+  setCurrentPage: (page: Page) => void;
+}) {
   const { isSignedIn, user } = useUser();
   const [orgId, setOrgId] = useState("demo-org-123");
-  
+
   // Using the org-based queries
   const orgSubscription = useQuery(api.stripe.getOrgSubscription, { orgId });
   const orgInvoices = useQuery(api.stripe.getOrgInvoices, { orgId });
   const updateSeatsAction = useAction(api.stripe.updateSeats);
-  const createTeamCheckout = useAction(api.stripe.createTeamSubscriptionCheckout);
+  const createTeamCheckout = useAction(
+    api.stripe.createTeamSubscriptionCheckout,
+  );
   const cancelSubscriptionAction = useAction(api.stripe.cancelSubscription);
-  const reactivateSubscriptionAction = useAction(api.stripe.reactivateSubscription);
+  const reactivateSubscriptionAction = useAction(
+    api.stripe.reactivateSubscription,
+  );
   const [updatingSeats, setUpdatingSeats] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
   const [canceling, setCanceling] = useState(false);
@@ -773,7 +921,9 @@ function TeamBillingPage({ setCurrentPage }: { setCurrentPage: (page: Page) => v
       <div className="auth-page">
         <div className="auth-container">
           <h2 className="auth-title">Team Billing</h2>
-          <p className="auth-subtitle">Sign in to manage your team's subscription</p>
+          <p className="auth-subtitle">
+            Sign in to manage your team's subscription
+          </p>
           <SignInButton mode="modal">
             <button className="btn-primary">
               Sign in
@@ -789,9 +939,9 @@ function TeamBillingPage({ setCurrentPage }: { setCurrentPage: (page: Page) => v
     if (!orgSubscription) return;
     setUpdatingSeats(true);
     try {
-      await updateSeatsAction({ 
-        subscriptionId: orgSubscription.stripeSubscriptionId, 
-        seatCount: newCount 
+      await updateSeatsAction({
+        subscriptionId: orgSubscription.stripeSubscriptionId,
+        seatCount: newCount,
       });
     } catch (error) {
       console.error("Update seats error:", error);
@@ -821,14 +971,18 @@ function TeamBillingPage({ setCurrentPage }: { setCurrentPage: (page: Page) => v
 
   const handleCancelTeamSubscription = async () => {
     if (!orgSubscription) return;
-    if (!confirm("Are you sure you want to cancel? Your team subscription will remain active until the end of the current billing period.")) {
+    if (
+      !confirm(
+        "Are you sure you want to cancel? Your team subscription will remain active until the end of the current billing period.",
+      )
+    ) {
       return;
     }
-    
+
     setCanceling(true);
     try {
-      await cancelSubscriptionAction({ 
-        subscriptionId: orgSubscription.stripeSubscriptionId 
+      await cancelSubscriptionAction({
+        subscriptionId: orgSubscription.stripeSubscriptionId,
       });
     } catch (error) {
       console.error("Cancel error:", error);
@@ -840,11 +994,11 @@ function TeamBillingPage({ setCurrentPage }: { setCurrentPage: (page: Page) => v
 
   const handleReactivateSubscription = async () => {
     if (!orgSubscription) return;
-    
+
     setReactivating(true);
     try {
-      await reactivateSubscriptionAction({ 
-        subscriptionId: orgSubscription.stripeSubscriptionId 
+      await reactivateSubscriptionAction({
+        subscriptionId: orgSubscription.stripeSubscriptionId,
       });
     } catch (error) {
       console.error("Reactivate error:", error);
@@ -863,7 +1017,9 @@ function TeamBillingPage({ setCurrentPage }: { setCurrentPage: (page: Page) => v
         </div>
         <div className="profile-info">
           <h1 className="profile-name">Team Billing</h1>
-          <p className="profile-email">Organization-based subscription management</p>
+          <p className="profile-email">
+            Organization-based subscription management
+          </p>
         </div>
       </div>
 
@@ -874,14 +1030,15 @@ function TeamBillingPage({ setCurrentPage }: { setCurrentPage: (page: Page) => v
         </div>
         <div className="org-lookup-demo">
           <p className="demo-note">
-            This demonstrates <code>getSubscriptionByOrgId</code> and <code>listPaymentsByOrgId</code>. 
-            In a real app, the orgId would come from your auth provider (e.g., Clerk Organizations).
+            This demonstrates <code>getSubscriptionByOrgId</code> and{" "}
+            <code>listPaymentsByOrgId</code>. In a real app, the orgId would
+            come from your auth provider (e.g., Clerk Organizations).
           </p>
           <div className="org-input-group">
             <label>Organization ID:</label>
-            <input 
-              type="text" 
-              value={orgId} 
+            <input
+              type="text"
+              value={orgId}
               onChange={(e) => setOrgId(e.target.value)}
               placeholder="Enter organization ID"
             />
@@ -902,7 +1059,7 @@ function TeamBillingPage({ setCurrentPage }: { setCurrentPage: (page: Page) => v
             <div className="empty-icon">👥</div>
             <h3>Start a Team Subscription</h3>
             <p>Subscribe your organization to the Hat of the Month Club</p>
-            
+
             {/* Team Size Selector */}
             <div className="team-subscribe-form">
               <div className="team-size-selector">
@@ -926,15 +1083,19 @@ function TeamBillingPage({ setCurrentPage }: { setCurrentPage: (page: Page) => v
                     +
                   </button>
                 </div>
-                <p className="seats-price">${PRODUCTS.monthlySubscription.price * teamSeats}/month</p>
+                <p className="seats-price">
+                  ${PRODUCTS.monthlySubscription.price * teamSeats}/month
+                </p>
               </div>
-              
-              <button 
+
+              <button
                 className="btn-primary btn-large"
                 onClick={handleTeamSubscribe}
                 disabled={subscribing}
               >
-                {subscribing ? "Creating checkout..." : `Subscribe Team for $${PRODUCTS.monthlySubscription.price * teamSeats}/mo`}
+                {subscribing
+                  ? "Creating checkout..."
+                  : `Subscribe Team for $${PRODUCTS.monthlySubscription.price * teamSeats}/mo`}
                 <span>→</span>
               </button>
             </div>
@@ -950,16 +1111,28 @@ function TeamBillingPage({ setCurrentPage }: { setCurrentPage: (page: Page) => v
             </div>
 
             {/* Seat Management - Disabled when canceling */}
-            <div className={`team-seats-section ${orgSubscription.cancelAtPeriodEnd ? 'disabled' : ''}`}>
+            <div
+              className={`team-seats-section ${orgSubscription.cancelAtPeriodEnd ? "disabled" : ""}`}
+            >
               <h4>Team Seats</h4>
               {orgSubscription.cancelAtPeriodEnd && (
-                <p className="seats-disabled-notice">Seat management disabled for canceling subscriptions</p>
+                <p className="seats-disabled-notice">
+                  Seat management disabled for canceling subscriptions
+                </p>
               )}
               <div className="team-seats-controls">
                 <button
                   className="seat-btn-lg"
-                  onClick={() => handleUpdateSeats(Math.max(1, (orgSubscription.quantity || 1) - 1))}
-                  disabled={updatingSeats || (orgSubscription.quantity || 1) <= 1 || orgSubscription.cancelAtPeriodEnd}
+                  onClick={() =>
+                    handleUpdateSeats(
+                      Math.max(1, (orgSubscription.quantity || 1) - 1),
+                    )
+                  }
+                  disabled={
+                    updatingSeats ||
+                    (orgSubscription.quantity || 1) <= 1 ||
+                    orgSubscription.cancelAtPeriodEnd
+                  }
                 >
                   −
                 </button>
@@ -971,35 +1144,47 @@ function TeamBillingPage({ setCurrentPage }: { setCurrentPage: (page: Page) => v
                 </div>
                 <button
                   className="seat-btn-lg"
-                  onClick={() => handleUpdateSeats((orgSubscription.quantity || 1) + 1)}
+                  onClick={() =>
+                    handleUpdateSeats((orgSubscription.quantity || 1) + 1)
+                  }
                   disabled={updatingSeats || orgSubscription.cancelAtPeriodEnd}
                 >
                   +
                 </button>
               </div>
               <p className="seats-price">
-                ${PRODUCTS.monthlySubscription.price * (orgSubscription.quantity || 1)}/month
+                $
+                {PRODUCTS.monthlySubscription.price *
+                  (orgSubscription.quantity || 1)}
+                /month
               </p>
             </div>
 
             <div className="subscription-meta">
               <div className="meta-item">
                 <span className="meta-label">
-                  {orgSubscription.cancelAtPeriodEnd ? "Cancels on" : "Next billing date"}
+                  {orgSubscription.cancelAtPeriodEnd
+                    ? "Cancels on"
+                    : "Next billing date"}
                 </span>
-                <span className="meta-value">{formatDate(orgSubscription.currentPeriodEnd)}</span>
+                <span className="meta-value">
+                  {formatDate(orgSubscription.currentPeriodEnd)}
+                </span>
               </div>
               <div className="meta-item">
                 <span className="meta-label">Organization ID</span>
-                <span className="meta-value">{orgSubscription.orgId || "Not linked"}</span>
+                <span className="meta-value">
+                  {orgSubscription.orgId || "Not linked"}
+                </span>
               </div>
             </div>
 
             {/* Cancellation Notice & Reactivate Button */}
             {orgSubscription.cancelAtPeriodEnd && (
               <div className="cancel-notice-banner">
-                ⚠️ This subscription will be canceled on {formatDate(orgSubscription.currentPeriodEnd)}
-                <button 
+                ⚠️ This subscription will be canceled on{" "}
+                {formatDate(orgSubscription.currentPeriodEnd)}
+                <button
                   className="btn-reactivate"
                   onClick={handleReactivateSubscription}
                   disabled={reactivating}
@@ -1010,15 +1195,16 @@ function TeamBillingPage({ setCurrentPage }: { setCurrentPage: (page: Page) => v
             )}
 
             {/* Cancel Button (only show if not already canceling) */}
-            {orgSubscription.status === "active" && !orgSubscription.cancelAtPeriodEnd && (
-              <button 
-                className="btn-cancel"
-                onClick={handleCancelTeamSubscription}
-                disabled={canceling}
-              >
-                {canceling ? "Canceling..." : "Cancel Subscription"}
-              </button>
-            )}
+            {orgSubscription.status === "active" &&
+              !orgSubscription.cancelAtPeriodEnd && (
+                <button
+                  className="btn-cancel"
+                  onClick={handleCancelTeamSubscription}
+                  disabled={canceling}
+                >
+                  {canceling ? "Canceling..." : "Cancel Subscription"}
+                </button>
+              )}
           </div>
         )}
       </section>
@@ -1035,7 +1221,10 @@ function TeamBillingPage({ setCurrentPage }: { setCurrentPage: (page: Page) => v
           <div className="empty-state">
             <div className="empty-icon">🧾</div>
             <h3>No invoices yet</h3>
-            <p>Team invoice history will appear here after your first billing cycle.</p>
+            <p>
+              Team invoice history will appear here after your first billing
+              cycle.
+            </p>
           </div>
         ) : (
           <div className="orders-table">
@@ -1047,13 +1236,18 @@ function TeamBillingPage({ setCurrentPage }: { setCurrentPage: (page: Page) => v
             </div>
             {orgInvoices.map((invoice) => (
               <div key={invoice.stripeInvoiceId} className="table-row">
-                <span className="order-date">{formatDate(invoice.created)}</span>
+                <span className="order-date">
+                  {formatDate(invoice.created)}
+                </span>
                 <span className="order-product">
                   <span className="product-icon">🎩</span>
                   Team Subscription
                 </span>
                 <span className="order-amount">
-                  {formatCurrency(invoice.amountPaid || invoice.amountDue, "usd")}
+                  {formatCurrency(
+                    invoice.amountPaid || invoice.amountDue,
+                    "usd",
+                  )}
                 </span>
                 <span>{getStatusBadge(invoice.status)}</span>
               </div>
@@ -1076,19 +1270,23 @@ function App() {
 
   // Check for success/cancel URL params and track in state
   const urlParams = new URLSearchParams(window.location.search);
-  const [showSuccess, setShowSuccess] = useState(urlParams.get("success") === "true");
-  const [showCanceled, setShowCanceled] = useState(urlParams.get("canceled") === "true");
+  const [showSuccess, setShowSuccess] = useState(
+    urlParams.get("success") === "true",
+  );
+  const [showCanceled, setShowCanceled] = useState(
+    urlParams.get("canceled") === "true",
+  );
 
   const dismissToast = (type: "success" | "canceled") => {
     if (type === "success") setShowSuccess(false);
     if (type === "canceled") setShowCanceled(false);
-    window.history.replaceState({}, '', window.location.pathname);
+    window.history.replaceState({}, "", window.location.pathname);
   };
 
   return (
     <>
       <Navbar currentPage={currentPage} setCurrentPage={setCurrentPage} />
-      
+
       {/* Success/Cancel Messages */}
       {showSuccess && (
         <div className="toast toast-success">
@@ -1102,11 +1300,17 @@ function App() {
           <button onClick={() => dismissToast("canceled")}>×</button>
         </div>
       )}
-      
-      {currentPage === "home" && <LandingPage setCurrentPage={setCurrentPage} />}
+
+      {currentPage === "home" && (
+        <LandingPage setCurrentPage={setCurrentPage} />
+      )}
       {currentPage === "store" && <StorePage setCurrentPage={setCurrentPage} />}
-      {currentPage === "profile" && <ProfilePage setCurrentPage={setCurrentPage} />}
-      {currentPage === "team" && <TeamBillingPage setCurrentPage={setCurrentPage} />}
+      {currentPage === "profile" && (
+        <ProfilePage setCurrentPage={setCurrentPage} />
+      )}
+      {currentPage === "team" && (
+        <TeamBillingPage setCurrentPage={setCurrentPage} />
+      )}
     </>
   );
 }

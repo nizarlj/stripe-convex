@@ -16,7 +16,9 @@ const stripeClient = new StripeSubscriptions(components.stripe, {});
 function getAppUrl(): string {
   const url = process.env.APP_URL;
   if (!url) {
-    throw new Error("APP_URL environment variable is not set. Add it in your Convex dashboard.");
+    throw new Error(
+      "APP_URL environment variable is not set. Add it in your Convex dashboard.",
+    );
   }
   return url;
 }
@@ -201,7 +203,7 @@ export const updateSeats = action({
     // Verify ownership
     const subscription = await ctx.runQuery(
       components.stripe.public.getSubscription,
-      { stripeSubscriptionId: args.subscriptionId }
+      { stripeSubscriptionId: args.subscriptionId },
     );
 
     if (!subscription || subscription.userId !== identity.subject) {
@@ -229,18 +231,21 @@ export const getOrgSubscription = query({
   args: {
     orgId: v.string(),
   },
-  returns: v.union(v.object({
-    stripeSubscriptionId: v.string(),
-    stripeCustomerId: v.string(),
-    status: v.string(),
-    priceId: v.string(),
-    quantity: v.optional(v.number()),
-    currentPeriodEnd: v.number(),
-    cancelAtPeriodEnd: v.boolean(),
-    metadata: v.optional(v.any()),
-    userId: v.optional(v.string()),
-    orgId: v.optional(v.string()),
-  }), v.null()),
+  returns: v.union(
+    v.object({
+      stripeSubscriptionId: v.string(),
+      stripeCustomerId: v.string(),
+      status: v.string(),
+      priceId: v.string(),
+      quantity: v.optional(v.number()),
+      currentPeriodEnd: v.number(),
+      cancelAtPeriodEnd: v.boolean(),
+      metadata: v.optional(v.any()),
+      userId: v.optional(v.string()),
+      orgId: v.optional(v.string()),
+    }),
+    v.null(),
+  ),
   handler: async (ctx, args) => {
     return await ctx.runQuery(components.stripe.public.getSubscriptionByOrgId, {
       orgId: args.orgId,
@@ -255,17 +260,19 @@ export const getOrgPayments = query({
   args: {
     orgId: v.string(),
   },
-  returns: v.array(v.object({
-    stripePaymentIntentId: v.string(),
-    stripeCustomerId: v.optional(v.string()),
-    amount: v.number(),
-    currency: v.string(),
-    status: v.string(),
-    created: v.number(),
-    metadata: v.optional(v.any()),
-    userId: v.optional(v.string()),
-    orgId: v.optional(v.string()),
-  })),
+  returns: v.array(
+    v.object({
+      stripePaymentIntentId: v.string(),
+      stripeCustomerId: v.optional(v.string()),
+      amount: v.number(),
+      currency: v.string(),
+      status: v.string(),
+      created: v.number(),
+      metadata: v.optional(v.any()),
+      userId: v.optional(v.string()),
+      orgId: v.optional(v.string()),
+    }),
+  ),
   handler: async (ctx, args) => {
     return await ctx.runQuery(components.stripe.public.listPaymentsByOrgId, {
       orgId: args.orgId,
@@ -281,17 +288,19 @@ export const getOrgInvoices = query({
   args: {
     orgId: v.string(),
   },
-  returns: v.array(v.object({
-    stripeInvoiceId: v.string(),
-    stripeCustomerId: v.string(),
-    stripeSubscriptionId: v.optional(v.string()),
-    status: v.string(),
-    amountDue: v.number(),
-    amountPaid: v.number(),
-    created: v.number(),
-    orgId: v.optional(v.string()),
-    userId: v.optional(v.string()),
-  })),
+  returns: v.array(
+    v.object({
+      stripeInvoiceId: v.string(),
+      stripeCustomerId: v.string(),
+      stripeSubscriptionId: v.optional(v.string()),
+      status: v.string(),
+      amountDue: v.number(),
+      amountPaid: v.number(),
+      created: v.number(),
+      orgId: v.optional(v.string()),
+      userId: v.optional(v.string()),
+    }),
+  ),
   handler: async (ctx, args) => {
     // Direct lookup by orgId (now that invoices have orgId index)
     return await ctx.runQuery(components.stripe.public.listInvoicesByOrgId, {
@@ -334,18 +343,21 @@ export const getSubscriptionInfo = query({
   args: {
     subscriptionId: v.string(),
   },
-  returns: v.union(v.object({
-    stripeSubscriptionId: v.string(),
-    stripeCustomerId: v.string(),
-    status: v.string(),
-    priceId: v.string(),
-    quantity: v.optional(v.number()),
-    currentPeriodEnd: v.number(),
-    cancelAtPeriodEnd: v.boolean(),
-    metadata: v.optional(v.any()),
-    userId: v.optional(v.string()),
-    orgId: v.optional(v.string()),
-  }), v.null()),
+  returns: v.union(
+    v.object({
+      stripeSubscriptionId: v.string(),
+      stripeCustomerId: v.string(),
+      status: v.string(),
+      priceId: v.string(),
+      quantity: v.optional(v.number()),
+      currentPeriodEnd: v.number(),
+      cancelAtPeriodEnd: v.boolean(),
+      metadata: v.optional(v.any()),
+      userId: v.optional(v.string()),
+      orgId: v.optional(v.string()),
+    }),
+    v.null(),
+  ),
   handler: async (ctx, args) => {
     return await ctx.runQuery(components.stripe.public.getSubscription, {
       stripeSubscriptionId: args.subscriptionId,
@@ -373,7 +385,7 @@ export const cancelSubscription = action({
     // Verify ownership by checking the subscription's userId
     const subscription = await ctx.runQuery(
       components.stripe.public.getSubscription,
-      { stripeSubscriptionId: args.subscriptionId }
+      { stripeSubscriptionId: args.subscriptionId },
     );
 
     if (!subscription || subscription.userId !== identity.subject) {
@@ -404,7 +416,7 @@ export const reactivateSubscription = action({
     // Verify ownership
     const subscription = await ctx.runQuery(
       components.stripe.public.getSubscription,
-      { stripeSubscriptionId: args.subscriptionId }
+      { stripeSubscriptionId: args.subscriptionId },
     );
 
     if (!subscription || subscription.userId !== identity.subject) {
@@ -434,9 +446,12 @@ export const reactivateSubscription = action({
  */
 export const getCustomerPortalUrl = action({
   args: {},
-  returns: v.union(v.object({
-    url: v.string(),
-  }), v.null()),
+  returns: v.union(
+    v.object({
+      url: v.string(),
+    }),
+    v.null(),
+  ),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Not authenticated");
@@ -444,7 +459,7 @@ export const getCustomerPortalUrl = action({
     // Find customer ID from subscriptions or payments
     const subscriptions = await ctx.runQuery(
       components.stripe.public.listSubscriptionsByUserId,
-      { userId: identity.subject }
+      { userId: identity.subject },
     );
 
     if (subscriptions.length > 0) {
@@ -456,7 +471,7 @@ export const getCustomerPortalUrl = action({
 
     const payments = await ctx.runQuery(
       components.stripe.public.listPaymentsByUserId,
-      { userId: identity.subject }
+      { userId: identity.subject },
     );
 
     if (payments.length > 0 && payments[0].stripeCustomerId) {
@@ -483,33 +498,40 @@ export const getCustomerData = query({
     customerId: v.string(),
   },
   returns: v.object({
-    customer: v.union(v.object({
-      stripeCustomerId: v.string(),
-      email: v.optional(v.string()),
-      name: v.optional(v.string()),
-      metadata: v.optional(v.any()),
-    }), v.null()),
-    subscriptions: v.array(v.object({
-      stripeSubscriptionId: v.string(),
-      stripeCustomerId: v.string(),
-      status: v.string(),
-      priceId: v.string(),
-      quantity: v.optional(v.number()),
-      currentPeriodEnd: v.number(),
-      cancelAtPeriodEnd: v.boolean(),
-      metadata: v.optional(v.any()),
-      userId: v.optional(v.string()),
-      orgId: v.optional(v.string()),
-    })),
-    invoices: v.array(v.object({
-      stripeInvoiceId: v.string(),
-      stripeCustomerId: v.string(),
-      stripeSubscriptionId: v.optional(v.string()),
-      status: v.string(),
-      amountDue: v.number(),
-      amountPaid: v.number(),
-      created: v.number(),
-    })),
+    customer: v.union(
+      v.object({
+        stripeCustomerId: v.string(),
+        email: v.optional(v.string()),
+        name: v.optional(v.string()),
+        metadata: v.optional(v.any()),
+      }),
+      v.null(),
+    ),
+    subscriptions: v.array(
+      v.object({
+        stripeSubscriptionId: v.string(),
+        stripeCustomerId: v.string(),
+        status: v.string(),
+        priceId: v.string(),
+        quantity: v.optional(v.number()),
+        currentPeriodEnd: v.number(),
+        cancelAtPeriodEnd: v.boolean(),
+        metadata: v.optional(v.any()),
+        userId: v.optional(v.string()),
+        orgId: v.optional(v.string()),
+      }),
+    ),
+    invoices: v.array(
+      v.object({
+        stripeInvoiceId: v.string(),
+        stripeCustomerId: v.string(),
+        stripeSubscriptionId: v.optional(v.string()),
+        status: v.string(),
+        amountDue: v.number(),
+        amountPaid: v.number(),
+        created: v.number(),
+      }),
+    ),
   }),
   handler: async (ctx, args) => {
     const customer = await ctx.runQuery(components.stripe.public.getCustomer, {
@@ -517,7 +539,7 @@ export const getCustomerData = query({
     });
     const subscriptions = await ctx.runQuery(
       components.stripe.public.listSubscriptions,
-      { stripeCustomerId: args.customerId }
+      { stripeCustomerId: args.customerId },
     );
     const invoices = await ctx.runQuery(components.stripe.public.listInvoices, {
       stripeCustomerId: args.customerId,
@@ -541,25 +563,27 @@ export const getCustomerData = query({
  */
 export const getUserSubscriptions = query({
   args: {},
-  returns: v.array(v.object({
-    stripeSubscriptionId: v.string(),
-    stripeCustomerId: v.string(),
-    status: v.string(),
-    priceId: v.string(),
-    quantity: v.optional(v.number()),
-    currentPeriodEnd: v.number(),
-    cancelAtPeriodEnd: v.boolean(),
-    metadata: v.optional(v.any()),
-    userId: v.optional(v.string()),
-    orgId: v.optional(v.string()),
-  })),
+  returns: v.array(
+    v.object({
+      stripeSubscriptionId: v.string(),
+      stripeCustomerId: v.string(),
+      status: v.string(),
+      priceId: v.string(),
+      quantity: v.optional(v.number()),
+      currentPeriodEnd: v.number(),
+      cancelAtPeriodEnd: v.boolean(),
+      metadata: v.optional(v.any()),
+      userId: v.optional(v.string()),
+      orgId: v.optional(v.string()),
+    }),
+  ),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) return [];
 
     return await ctx.runQuery(
       components.stripe.public.listSubscriptionsByUserId,
-      { userId: identity.subject }
+      { userId: identity.subject },
     );
   },
 });
@@ -569,25 +593,26 @@ export const getUserSubscriptions = query({
  */
 export const getUserPayments = query({
   args: {},
-  returns: v.array(v.object({
-    stripePaymentIntentId: v.string(),
-    stripeCustomerId: v.optional(v.string()),
-    amount: v.number(),
-    currency: v.string(),
-    status: v.string(),
-    created: v.number(),
-    metadata: v.optional(v.any()),
-    userId: v.optional(v.string()),
-    orgId: v.optional(v.string()),
-  })),
+  returns: v.array(
+    v.object({
+      stripePaymentIntentId: v.string(),
+      stripeCustomerId: v.optional(v.string()),
+      amount: v.number(),
+      currency: v.string(),
+      status: v.string(),
+      created: v.number(),
+      metadata: v.optional(v.any()),
+      userId: v.optional(v.string()),
+      orgId: v.optional(v.string()),
+    }),
+  ),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) return [];
 
-    return await ctx.runQuery(
-      components.stripe.public.listPaymentsByUserId,
-      { userId: identity.subject }
-    );
+    return await ctx.runQuery(components.stripe.public.listPaymentsByUserId, {
+      userId: identity.subject,
+    });
   },
 });
 
@@ -596,23 +621,28 @@ export const getUserPayments = query({
  */
 export const getFailedPaymentSubscriptions = query({
   args: {},
-  returns: v.array(v.object({
-    stripeSubscriptionId: v.string(),
-    stripeCustomerId: v.string(),
-    status: v.string(),
-    currentPeriodEnd: v.number(),
-  })),
+  returns: v.array(
+    v.object({
+      stripeSubscriptionId: v.string(),
+      stripeCustomerId: v.string(),
+      status: v.string(),
+      currentPeriodEnd: v.number(),
+    }),
+  ),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) return [];
 
     const subscriptions = await ctx.runQuery(
       components.stripe.public.listSubscriptionsByUserId,
-      { userId: identity.subject }
+      { userId: identity.subject },
     );
 
     return subscriptions
-      .filter((sub: { status: string }) => sub.status === "past_due" || sub.status === "unpaid")
+      .filter(
+        (sub: { status: string }) =>
+          sub.status === "past_due" || sub.status === "unpaid",
+      )
       .map((sub: any) => ({
         stripeSubscriptionId: sub.stripeSubscriptionId,
         stripeCustomerId: sub.stripeCustomerId,
